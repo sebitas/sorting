@@ -84,14 +84,14 @@ inline void InsertSort(RandomAccessIterator start, RandomAccessIterator end, Les
         {
             
             RandomAccessIterator __k = __j;
-            value_type __t(_VSTD::move(*__i));
+            value_type __t(std::move(*__i));
             __j = __i;
             do
             {
-                *__j = _VSTD::move(*__k);
+                *__j = std::move(*__k);
                 __j = __k;
             } while (__j != start && LessThan()(__t, *--__k));
-            *__j = _VSTD::move(__t);
+            *__j = std::move(__t);
         }
         __j = __i;
     }
@@ -99,8 +99,29 @@ inline void InsertSort(RandomAccessIterator start, RandomAccessIterator end, Les
 }
 
 template <typename RandomAccessIterator, typename LessThan>
-inline void SelectSort(RandomAccessIterator start, RandomAccessIterator end, LessThan &lessThan) {
-    // Adicione el código de Selection Sort.
+inline void SelectSort(RandomAccessIterator start, RandomAccessIterator end, LessThan &lessThan) 
+{
+
+
+    RandomAccessIterator __j = start;
+    RandomAccessIterator __end = end - 1;
+    RandomAccessIterator __min;
+    typedef typename std::iterator_traits<RandomAccessIterator>::value_type value_type;
+    for (RandomAccessIterator __i = __j+1; __i != end; ++__i)
+    {
+        __min = __i;
+        
+        for (RandomAccessIterator __k = __i + 1; __k != end; ++__k)
+        {
+             if (LessThan()(*__k, *__min))
+             {
+                *__min = std::move(*__k);
+                __min = __k;
+             }
+        }
+        *__i = std::move(*__min);
+        __i = __min;
+    }
 }
 
 template <typename RandomAccessIterator, typename LessThan>
@@ -140,7 +161,7 @@ inline void YaroslavskiyQuickSort(RandomAccessIterator start, RandomAccessIterat
 
 int main(int argc, char** argv) {
     typedef void (*SORT_ALGORITHM)(std::vector<int>::iterator, std::vector<int>::iterator);
-    for ( auto & i : {100,1000,10000,100000,1000000,10000000,100000000}){
+    for ( auto & i : {100,/*1000,10000,100000,1000000,10000000,100000000*/}){
         std::vector<int> w(i),v;
         std::iota(w.begin(), w.end(), 1);
         for(auto a = w.begin(), _a = w.begin()+i/100; a < w.end(); _a += i/100)
@@ -165,9 +186,9 @@ int main(int argc, char** argv) {
             v=w;
             std::clock_t inicio = std::clock();
             sort_algorithm(v.begin(),v.end());
-            //            for (std::vector<int>::iterator it = v.begin(); it != v.end(); it++ ) {
-            //                std::cout<<*it<<std::;
-            //            }
+            // for (std::vector<int>::iterator it = v.begin(); it != v.end(); it++ ) {
+            //     std::cout<<*it<<std::endl;
+            // }
             std::cout << 1000.0 * (double)(std::clock()-inicio)/(double)CLOCKS_PER_SEC << ", " << std::flush;
         }
         std::cout << std::endl;
